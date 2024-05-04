@@ -64,6 +64,8 @@
     "field_enable_interim_results": "Enable interim results",
     "field_uwu_filter": "UwU filter",
     "field_uwu_filter_desc": "Only works with English (* ^ ω ^)!!1",
+    "field_pirate_filter": "Pirate filter",
+    "field_pirate_filter_desc": "Only works with English",
     "state_muted": "Muted",
     "state_": "Muted",
 

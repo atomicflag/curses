@@ -218,6 +218,10 @@ const Inspector_STT: FC = () => {
         <InputCheckbox label='stt.field_uwu_filter' onChange={e => up("uwu", e)} value={data.data.uwu} />
         <Inspector.Description>{t('stt.field_uwu_filter_desc')}</Inspector.Description>
       </div>
+      <div className="pt-8">
+        <InputCheckbox label='stt.field_pirate_filter' onChange={e => up("pirate", e)} value={data.data.pirate} />
+        <Inspector.Description>{t('stt.field_pirate_filter_desc')}</Inspector.Description>
+      </div>
     </Inspector.Content>
   </Inspector.Body>
 }

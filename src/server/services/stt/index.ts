@@ -140,8 +140,12 @@ class Service_STT implements IServiceInterface, ISTTReceiver {
 
   async #sendFinal(sentence: string) {
     let value = sentence;
+
+    if (this.data.pirate) {
+      value = await invoke<string>("plugin:pirate|translate", {value: value});
+    }
     if (this.data.uwu) {
-      value = await invoke<string>("plugin:uwu|translate", {value: sentence});
+      value = await invoke<string>("plugin:uwu|translate", {value: value});
     }
 
     value = this.runReplacements(value);
@@ -159,8 +163,11 @@ class Service_STT implements IServiceInterface, ISTTReceiver {
 
   async #sendInterim(sentence: string) {
     let value = sentence;
+    if (this.data.pirate) {
+      value = await invoke<string>("plugin:pirate|translate", {value: value});
+    }
     if (this.data.uwu) {
-      value = await invoke<string>("plugin:uwu|translate", {value: sentence});
+      value = await invoke<string>("plugin:uwu|translate", {value: value});
     }
     value = this.runReplacements(value);
     !this.isMuted() &&
