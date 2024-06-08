@@ -167,8 +167,29 @@ fn pirate_dictionary() -> &'static HashMap<&'static str, &'static str> {
     })
 }
 
-fn translate_word(word: &str) -> &str {
-    pirate_dictionary().get(word).unwrap_or(&word)
+fn translate_word(word: &str) -> String {
+    // let word = word.strip_prefix(|c| char::is_ascii_punctuation(&c)).unwrap_or(word);
+    // let word = word.strip_suffix(|c| char::is_ascii_punctuation(&c)).unwrap_or(word);
+    // pirate_dictionary().get(word).unwrap_or(&word)
+    // word.split(|c| char::is_ascii_punctuation(&c)).map(|w| {
+    //     dbg!(w);
+    //     if w.is_empty() { return w }
+    //     if char::is_ascii_punctuation(&w.chars().next().unwrap()) {
+    //         return w
+    //     } else {
+    //         return pirate_dictionary().get(word).unwrap_or(&word)
+    //     }
+    // }).collect::<String>()
+    dbg!(word);
+    if !word.ends_with(|c| char::is_ascii_punctuation(&c)) {
+        return (*pirate_dictionary().get(word).unwrap_or(&word)).to_owned();
+    }
+    if word.is_empty() {return word.to_owned()}
+    let (word, punct) = word.split_at(word.len()-1);
+    let word = *pirate_dictionary().get(word).unwrap_or(&word);
+    let mut word = word.to_owned();
+    word.push_str(punct);
+    word
 }
 
 #[command]
