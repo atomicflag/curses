@@ -4,7 +4,7 @@ use tauri::{
     Runtime,
 };
 
-use std::{sync::OnceLock, collections::HashMap};
+use std::{collections::HashMap, sync::OnceLock};
 
 fn pirate_dictionary() -> &'static HashMap<&'static str, &'static str> {
     static INSTANCE: OnceLock<HashMap<&'static str, &'static str>> = OnceLock::new();
@@ -162,39 +162,42 @@ fn pirate_dictionary() -> &'static HashMap<&'static str, &'static str> {
             ("you're", "you be"),
             ("you've", "ye"),
             ("your", "yer"),
-            ("yup", "aye")
+            ("yup", "aye"),
         ])
     })
 }
 
 fn translate_word(word: &str) -> String {
-    // let word = word.strip_prefix(|c| char::is_ascii_punctuation(&c)).unwrap_or(word);
-    // let word = word.strip_suffix(|c| char::is_ascii_punctuation(&c)).unwrap_or(word);
-    // pirate_dictionary().get(word).unwrap_or(&word)
-    // word.split(|c| char::is_ascii_punctuation(&c)).map(|w| {
-    //     dbg!(w);
-    //     if w.is_empty() { return w }
-    //     if char::is_ascii_punctuation(&w.chars().next().unwrap()) {
-    //         return w
-    //     } else {
-    //         return pirate_dictionary().get(word).unwrap_or(&word)
-    //     }
-    // }).collect::<String>()
     dbg!(word);
-    if !word.ends_with(|c| char::is_ascii_punctuation(&c)) {
-        return (*pirate_dictionary().get(word).unwrap_or(&word)).to_owned();
+    if word.is_empty() {
+        return word.to_owned();
     }
-    if word.is_empty() {return word.to_owned()}
-    let (word, punct) = word.split_at(word.len()-1);
-    let word = *pirate_dictionary().get(word).unwrap_or(&word);
-    let mut word = word.to_owned();
-    word.push_str(punct);
-    word
+    let is_uppercase = word.starts_with(|c| char::is_ascii_uppercase(&c));
+    let word = word.to_lowercase();
+    let word: String = if !word.ends_with(|c| char::is_ascii_punctuation(&c)) {
+        match pirate_dictionary().get(word.as_str()) {
+            None => word,
+            Some(w) => (*w).to_owned(),
+        }
+    } else {
+        let (word, punct) = word.split_at(word.len() - 1);
+        (*pirate_dictionary().get(word).unwrap_or(&word)).to_owned() + punct
+    };
+    if is_uppercase {
+        let (first_letter, rest) = word.split_at(1);
+        first_letter.to_uppercase() + rest
+    } else {
+        word
+    }
 }
 
 #[command]
 fn translate(value: String) -> String {
-    value.to_lowercase().split_whitespace().map(translate_word).collect::<Vec<_>>().join(" ")
+    value
+        .split_whitespace()
+        .map(translate_word)
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
@@ -212,6 +215,6 @@ mod tests {
         assert_eq!(translate("i".to_owned()), "me");
         assert_eq!(translate("asdf".to_owned()), "asdf");
         assert_eq!(translate("i asdf".to_owned()), "me asdf");
-        assert_eq!(translate("I Asdf".to_owned()), "me asdf");
+        assert_eq!(translate("I Asdf".to_owned()), "Me asdf");
     }
 }
