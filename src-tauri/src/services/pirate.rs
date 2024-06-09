@@ -174,7 +174,7 @@ fn translate_word(word: &str) -> String {
     }
     let is_uppercase = word.starts_with(|c| char::is_ascii_uppercase(&c));
     let word = word.to_lowercase();
-    let word: String = if !word.ends_with(|c| char::is_ascii_punctuation(&c)) {
+    let mut word: String = if !word.ends_with(|c| char::is_ascii_punctuation(&c)) {
         match pirate_dictionary().get(word.as_str()) {
             None => word,
             Some(w) => (*w).to_owned(),
@@ -184,11 +184,9 @@ fn translate_word(word: &str) -> String {
         (*pirate_dictionary().get(word).unwrap_or(&word)).to_owned() + punct
     };
     if is_uppercase {
-        let (first_letter, rest) = word.split_at(1);
-        first_letter.to_uppercase() + rest
-    } else {
-        word
+        word.get_mut(..1).unwrap_or_default().make_ascii_uppercase();
     }
+    word
 }
 
 #[command]
